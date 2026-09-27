@@ -71,9 +71,19 @@ export async function saveApiKeys(formData: FormData) {
   }
 
   const merchant = await getMerchantById(merchantId);
-  if (!merchant || !(await updateMerchantKeys(merchant.id, keyId, keySecret))) {
+  
+  // Only log the user out if their user record actually no longer exists
+  if (!merchant) {
     cookies().delete("merchant-session");
-    return;
+    redirect("/login");
+  }
+
+  // Safely attempt the update without destroying the session if it fails
+  const updated = await updateMerchantKeys(merchant.id, keyId, keySecret);
+  
+  if (!updated) {
+    console.error("Failed to update keys. Ensure your Supabase UPDATE policy is active.");
+    return; 
   }
 
   revalidatePath("/dashboard");

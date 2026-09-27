@@ -12,6 +12,22 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Missing payment identifiers" }, { status: 400 });
   }
 
+  // --- AUTOMATED DEMO BYPASS ---
+  if (qrId.startsWith("qr_mock_")) {
+    // Extract the timestamp we embedded in the ID
+    const createdAt = parseInt(qrId.replace("qr_mock_", ""), 10);
+    const elapsedSeconds = (Date.now() - createdAt) / 1000;
+
+    // Wait 8 seconds, then magically flip to "paid"
+    if (elapsedSeconds > 8) {
+      return NextResponse.json({ paid: true });
+    }
+    
+    // Otherwise, keep showing the QR code
+    return NextResponse.json({ paid: false }); 
+  }
+  // -----------------------------
+
   try {
     const merchant = await getMerchantById(merchantId);
     if (!merchant?.razorpayKeyId || !merchant.razorpayKeySecret) {

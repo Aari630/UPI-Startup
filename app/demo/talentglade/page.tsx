@@ -1,3 +1,4 @@
+import { ChatWidget } from "@/components/chat-widget";
 import { StorefrontChat } from "@/components/storefront-chat";
 
 export default function TalentgladeDemoPage() {
@@ -23,6 +24,7 @@ export default function TalentgladeDemoPage() {
       </section>
 
       <StorefrontChat storeName="talentglade" />
+      <ChatWidget storeName="talentglade"/>
     </main>
   );
 }

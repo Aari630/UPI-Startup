@@ -108,13 +108,12 @@ export async function processChatMessage(
       return { success: false, error: "The checkout amount is invalid." };
     }
 
-    const qrCode = await razorpay.qrCode.create({
-      type: "upi_qr",
-      usage: "single_use",
-      fixed_amount: true,
-      payment_amount: Math.round(toolArguments.finalPrice * 100),
-      name: merchant.storeName,
-    });
+    // Mock QR code generator to bypass Razorpay authentication for the demo
+const mockUpiString = `upi://pay?pa=demo@ybl&pn=${encodeURIComponent(merchant.storeName)}&am=${toolArguments.finalPrice}`;
+const qrCode = {
+  image_url: `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(mockUpiString)}`,
+  id: `qr_mock_${Date.now()}`
+};
 
     return {
       success: true,
